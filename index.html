@@ -6,7 +6,620 @@
 <title>Annual Performance Review — Digital Communications</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-dim: rgba(201,168,76,0.15);
+    --ink: #0D0D0D;
+    --paper: #F8F5EF;
+    --paper-warm: #F0EBE0;
+    --muted: #6B6560;
+    --accent-teal: #2A7A6E;
+    --accent-blue: #1C4E80;
+    --line: rgba(201,168,76,0.25);
+    --white: #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
 
+  .cursor { position: fixed; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s; mix-blend-mode: multiply; }
+  .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid var(--gold); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.5; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; transition: background 0.3s, border-bottom 0.3s; }
+  nav.scrolled { background: rgba(13,13,13,0.92); border-bottom: 1px solid rgba(201,168,76,0.15); backdrop-filter: blur(12px); }
+  .nav-logo { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+
+  .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 40px 80px; overflow: hidden; background: var(--ink); }
+  .hero-bg-lines { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(90deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 1px, transparent 1px, transparent 60px), repeating-linear-gradient(0deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 1px, transparent 1px, transparent 60px); }
+  .hero-orbit { position: absolute; border: 1px solid rgba(201,168,76,0.12); border-radius: 50%; animation: orbit-spin linear infinite; }
+  .hero-orbit:nth-child(1) { width: 520px; height: 520px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-duration: 40s; }
+  .hero-orbit:nth-child(2) { width: 780px; height: 780px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-duration: 70s; border-style: dashed; }
+  .hero-orbit:nth-child(3) { width: 1080px; height: 1080px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-duration: 110s; animation-direction: reverse; }
+  @keyframes orbit-spin { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(360deg); } }
+  .orbit-dot { position: absolute; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; top: 0; left: 50%; transform: translateX(-50%); box-shadow: 0 0 12px var(--gold); }
+
+  .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 28px; opacity: 0; animation: fade-up 0.8s 0.3s forwards; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(52px, 8vw, 96px); font-weight: 900; color: var(--white); text-align: center; line-height: 1.0; letter-spacing: -0.02em; opacity: 0; animation: fade-up 0.9s 0.5s forwards; position: relative; z-index: 1; }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: 18px; color: rgba(255,255,255,0.55); text-align: center; margin-top: 24px; max-width: 900px; opacity: 0; animation: fade-up 0.9s 0.8s forwards; }
+
+  .interim-badge-wrap { opacity: 0; animation: fade-up 0.9s 1.0s forwards; margin-top: 36px; }
+  .interim-badge { display: inline-flex; align-items: center; gap: 16px; background: rgba(26,122,74,0.1); border: 1px solid rgba(74,186,126,0.35); border-radius: 4px; padding: 14px 24px; position: relative; overflow: hidden; }
+  .interim-badge::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #4ABA7E; }
+  .badge-pulse { width: 8px; height: 8px; border-radius: 50%; background: #4ABA7E; flex-shrink: 0; animation: pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.6); } }
+  .badge-check { width: 34px; height: 34px; background: rgba(74,186,126,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .badge-check svg { width: 17px; height: 17px; }
+  .badge-pct { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: #4ABA7E; line-height: 1; }
+  .badge-text { text-align: left; }
+  .badge-title { font-size: 13px; font-weight: 600; color: #4ABA7E; line-height: 1.3; }
+  .badge-sub { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(74,186,126,0.55); margin-top: 3px; }
+
+  .hero-meta { display: flex; gap: 36px; margin-top: 40px; opacity: 0; animation: fade-up 0.9s 1.2s forwards; flex-wrap: wrap; justify-content: center; }
+  .hero-meta-item { text-align: center; }
+  .hero-meta-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; color: var(--gold); display: block; }
+  .hero-meta-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); max-width: 110px; display: block; }
+  .hero-divider { width: 1px; background: rgba(201,168,76,0.2); }
+
+  .scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fade-up 1s 1.7s forwards; }
+  .scroll-hint span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+  .scroll-arrow { width: 1px; height: 48px; background: rgba(201,168,76,0.4); position: relative; overflow: hidden; }
+  .scroll-arrow::after { content: ''; position: absolute; top: -100%; left: 0; width: 1px; height: 100%; background: var(--gold); animation: scroll-flow 1.6s ease-in-out infinite; }
+  @keyframes scroll-flow { 0% { top: -100%; } 100% { top: 200%; } }
+
+  .section { position: relative; z-index: 1; padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #5e480b; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(36px,5vw,56px); font-weight: 900; line-height: 1.1; color: var(--ink); margin-bottom: 24px; }
+  .section-intro { font-size: 18px; color: var(--muted); max-width: 680px; margin-bottom: 64px; line-height: 1.8; }
+
+  .band { background: var(--ink); padding: 64px 40px; text-align: center; position: relative; z-index: 1; overflow: hidden; }
+  .band::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 20px); }
+  .band-quote { font-family: 'Playfair Display', serif; font-size: clamp(21px,3.2vw,37px); font-style: italic; color: var(--white); position: relative; z-index: 1; max-width: 900px; margin: 0 auto; line-height: 1.45; }
+  .band-quote em { color: var(--gold); font-style: normal; }
+
+  .parallax-text { position: relative; z-index: 1; overflow: hidden; padding: 16px 0; background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .parallax-inner { display: inline-flex; gap: 40px; animation: marquee 38s linear infinite; }
+  .parallax-inner span { font-family: 'Playfair Display', serif; font-size: 13px; font-style: italic; color: rgba(13,13,13,0.2); letter-spacing: 0.05em; }
+  .parallax-inner .dot { font-style: normal; color: var(--gold); font-size: 8px; vertical-align: middle; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .acc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 2px; background: var(--line); border: 2px solid var(--line); }
+  .acc-card { background: var(--paper); padding: 34px 30px; position: relative; overflow: hidden; transition: background 0.3s; }
+  .acc-card:hover { background: var(--paper-warm); }
+  .acc-card::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 0; background: var(--gold); transition: height 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .acc-card:hover::before { height: 100%; }
+  .acc-card-num { font-family: 'Playfair Display', serif; font-size: 70px; font-weight: 900; color: rgba(201,168,76,0.1); position: absolute; top: 10px; right: 18px; line-height: 1; transition: color 0.3s; }
+  .acc-card:hover .acc-card-num { color: rgba(201,168,76,0.22); }
+  .acc-card-tag { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: #5e480b; background: var(--gold-dim); padding: 4px 10px; border-radius: 2px; display: inline-block; margin-bottom: 14px; }
+  .acc-card-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 11px; line-height: 1.2; }
+  .acc-card-body { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+  .acc-card-body a { color: var(--accent-blue); text-decoration: none; border-bottom: 1px solid rgba(28,78,128,0.3); transition: color 0.2s, border-color 0.2s; }
+  .acc-card-body a:hover { color: var(--gold); border-color: var(--gold); }
+
+  .component-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+  .chip { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; padding: 5px 11px; border: 1px solid rgba(28,78,128,0.3); border-radius: 2px; color: var(--accent-blue); background: rgba(28,78,128,0.05); text-decoration: none; transition: background 0.2s, color 0.2s, border-color 0.2s; display: inline-block; }
+  .chip:hover { background: var(--accent-blue); color: var(--white); border-color: var(--accent-blue); }
+
+  .stats-strip { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--white); border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); position: relative; z-index: 1; }
+  .stat-cell { padding: 40px 20px; border-right: 1px solid var(--line); text-align: center; position: relative; overflow: hidden; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--gold); transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); transform-origin: left; }
+  .stat-cell.in-view::after { transform: scaleX(1); }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 900; color: var(--ink); display: block; line-height: 1; }
+  .stat-unit { color: var(--gold); }
+  .stat-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  .skills-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+  .skill-row { margin-bottom: 22px; opacity: 0; transform: translateY(16px); transition: opacity 0.5s, transform 0.5s; }
+  .skill-row.visible { opacity: 1; transform: translateY(0); }
+  .skill-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .skill-name { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+  .skill-pct { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); }
+  .skill-bar-bg { height: 3px; background: var(--line); position: relative; overflow: hidden; }
+  .skill-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--gold); width: 0; transition: width 1.2s cubic-bezier(0.25,0.46,0.45,0.94); }
+
+  .timeline { position: relative; padding-left: 48px; }
+  .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--line); }
+  .tl-item { position: relative; margin-bottom: 40px; opacity: 0; transform: translateX(-12px); transition: opacity 0.5s, transform 0.5s; }
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+  .tl-dot { position: absolute; left: -54px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--paper); box-shadow: 0 0 0 2px var(--gold); }
+  .tl-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 5px; }
+  .tl-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 7px; line-height: 1.2; }
+  .tl-body { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+  .qualities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .quality-card { background: var(--white); border: 1px solid var(--line); padding: 30px; position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+  .quality-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,0.07); }
+  .quality-icon { font-size: 28px; margin-bottom: 13px; display: block; }
+  .quality-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 9px; }
+  .quality-body { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .quality-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .footer { background: var(--ink); padding: 80px 40px; text-align: center; position: relative; z-index: 1; }
+  .footer-name { font-family: 'Playfair Display', serif; font-size: clamp(32px,5vw,60px); color: var(--white); font-weight: 900; margin-bottom: 8px; }
+  .footer-role { font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; }
+  .footer-year { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-line { width: 1px; height: 64px; background: rgba(201,168,76,0.3); margin: 32px auto; }
+
+  @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) { .skills-layout { grid-template-columns: 1fr; gap: 40px; } .qualities-grid { grid-template-columns: 1fr 1fr; } .stats-strip { grid-template-columns: repeat(3, 1fr); } .nav-links { display: none; } }
+  @media (max-width: 600px) { .qualities-grid { grid-template-columns: 1fr; } .stats-strip { grid-template-columns: repeat(2, 1fr); } .acc-grid { grid-template-columns: 1fr; } .hero-divider { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <div class="nav-logo">Dimitri Tadege Annual Performance Review · FY 2026</div>
+  <div class="nav-links">
+    <a href="#accomplishments">Achievements</a>
+    <a href="#impact">Impact</a>
+    <a href="#skills">Skills</a>
+    <a href="#qualities">Leadership</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-orbit"><div class="orbit-dot"></div></div>
+  <div class="hero-orbit"><div class="orbit-dot"></div></div>
+  <div class="hero-orbit"><div class="orbit-dot"></div></div>
+
+  <p class="hero-eyebrow">Digital Communications · Technology Leadership · Marketing</p>
+  <h1 class="hero-title">A Year of<br><em>Impact &amp; Innovation</em></h1>
+  <p class="hero-sub">This performance review highlights my contributions across enterprise architecture, digital platforms, and organizational leadership. It reflects how technical execution, strategic thinking, and innovation have driven measurable impact across the Digital Communications ecosystem.</p>
+
+ <!-- <div class="interim-badge-wrap">
+    <div class="interim-badge">
+      <div class="badge-pulse"></div>
+      <div class="badge-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4ABA7E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="badge-pct">100%</div>
+      <div class="badge-text">
+        <div class="badge-title">Interim Director Role Goal — Fully Accomplished</div>
+        <div class="badge-sub">All leadership objectives met &amp; exceeded · 2024–25</div>
+      </div>
+    </div>
+  </div>-->
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-num" data-count="12">0</span>
+      <span class="hero-meta-label">Enterprise Platforms Led</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-num" data-count="15">0</span>
+      <span class="hero-meta-label">Major Initiatives</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-num" data-count="20">0</span>
+      <span class="hero-meta-label">Folwell Components and Features</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-num" data-count="1">0</span>
+      <span class="hero-meta-label">Master's Degree Completed</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+
+
+<!-- ACCOMPLISHMENTS -->
+<section class="section" id="accomplishments">
+  <div class="section-label reveal">Part One</div>
+  <h2 class="section-title reveal">Key Accomplishments<br>&amp; Contributions</h2>
+  <p class="section-intro reveal">A transformative evaluation period defined by bold architectural decisions, thoughtful leadership, a completed master's degree, and enterprise-wide impact across the Digital Communications ecosystem.</p>
+
+  <div class="acc-grid reveal">
+
+    <div class="acc-card">
+      <span class="acc-card-num">01</span>
+      <span class="acc-card-tag">Platform Modernization</span>
+      <h3 class="acc-card-title">EMS Re-Architecture</h3>
+      <p class="acc-card-body">Led the complete re-architecture of the Enterprise Marketing System, modernizing the platform, improving scalability, and aligning it with long-term marketing and communications needs. Under new leadership, the team made more significant progress in the last seven months than had been accomplished since the project began in 2018 by removing roadblocks, streamlining unnecessary processes, improving technical direction, and positioning EMS for long-term success.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">02</span>
+      <span class="acc-card-tag">Communications Technology</span>
+      <h3 class="acc-card-title">SnapComms Implementation</h3>
+      <p class="acc-card-body">Played a key leadership role in implementing SnapComms by supporting both technical integration and department-wide adoption. This included selecting the appropriate tool, coordinating implementation efforts with OIT, aligning the platform with internal communication workflows, and ensuring successful adoption across UMarComm. The result was improved communication efficiency, faster dissemination of critical information, and a more reliable internal communications channel.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">03</span>
+      <span class="acc-card-tag">Design System</span>
+      <h3 class="acc-card-title">Folwell Design System &amp; 2.0 Roadmap</h3>
+      <p class="acc-card-body">Continued leading Folwell’s evolution by developing new components including <a href="https://folwell.umn.edu/video-carousel">video carousel</a>, <a href="https://folwell.umn.edu/testimonial">testimonial</a>, <a href="https://folwell.umn.edu/equal-height-callouts">equal-height callouts</a>, <a href="https://folwell.umn.edu/emergency-banner">emergency banners</a>, <a href="https://folwell.umn.edu/folwell-layout-builder-styles">layout builder styles</a>, and <a href="https://folwell.umn.edu/directional-link">directional links</a>, while also beginning to shape the Folwell 2.0 roadmap with AI-powered capabilities, workflow automation, and modernized development approaches, ensuring the platform continues evolving as a future-ready enterprise solution.</p>
+<!--      <div class="component-chips">
+        <a class="chip" href="https://folwell.umn.edu/video-carousel" target="_blank" rel="noopener">Video Carousel</a>
+        <a class="chip" href="https://folwell.umn.edu/testimonial" target="_blank" rel="noopener">Testimonial</a>
+        <a class="chip" href="https://folwell.umn.edu/equal-height-callouts" target="_blank" rel="noopener">Equal-Height Callouts</a>
+        <a class="chip" href="https://folwell.umn.edu/emergency-banner" target="_blank" rel="noopener">Emergency Banners</a>
+        <a class="chip" href="https://folwell.umn.edu/folwell-layout-builder-styles" target="_blank" rel="noopener">Layout Builder Styles</a>
+        <a class="chip" href="https://folwell.umn.edu/directional-link" target="_blank" rel="noopener">Directional Link</a>
+      </div>-->
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">04</span>
+      <span class="acc-card-tag">Engineering Maturity</span>
+      <h3 class="acc-card-title">GitHub Migration Strategy</h3>
+      <p class="acc-card-body">Architected the full end-to-end GitHub migration approach, transitioning from documentation-heavy planning into a structured, execution-ready implementation model. Designed migration patterns and practical reference implementations that significantly improved version control practices, increased engineering transparency, and strengthened development maturity across the team.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">05</span>
+      <span class="acc-card-tag">Custom Engineering</span>
+      <h3 class="acc-card-title">Board of Regents Platform</h3>
+      <p class="acc-card-body">Designed and implemented robust custom solutions for the BOR policies platform, including automated features that significantly improved user experience, editor workflows, accessibility, and long-term maintainability. Addressed complex BOR-specific requirements not supported natively within Drupal, delivering a more scalable, accessible, and efficient platform for both content editors and end users.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">06</span>
+      <span class="acc-card-tag">Strategic Tools</span>
+      <h3 class="acc-card-title">Custom Software Innovation</h3>
+      <p class="acc-card-body">Developed strategic software tools that provide competitive advantages for the team and organization, including a brand generator, brand compliance checker, and a higher education website analysis tool that evaluates the digital presence of Big Ten universities to deliver competitive intelligence on content strategies, audience targeting, and engagement approaches.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">07</span>
+      <span class="acc-card-tag">Emerging Technology</span>
+      <h3 class="acc-card-title">AI &amp; Automation Exploration</h3>
+      <p class="acc-card-body">Explored and experimented with emerging AI technologies and models to identify opportunities for improving workflows, increasing efficiency, and modernizing team processes. Evaluated AI-assisted development, automation opportunities, and process optimization strategies that reduce repetitive work and support future innovation across the organization.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">08</span>
+      <span class="acc-card-tag">Technical Mentorship</span>
+      <h3 class="acc-card-title">Team Leadership &amp; Guidance</h3>
+      <p class="acc-card-body">Provided strong leadership as a trusted technical mentor and strategic resource — regularly supporting architectural decision-making, modern development practices, accessibility standards, code quality improvements, scalability planning, and resolution of complex technical challenges. Helped foster a collaborative engineering culture centered on innovation, continuous learning, and shared ownership.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">09</span>
+      <span class="acc-card-tag">Strategic Alignment</span>
+      <h3 class="acc-card-title">Department-Level Strategy</h3>
+      <p class="acc-card-body">Demonstrated strong strategic leadership by defining and aligning team-level goals with <a href="https://docs.google.com/presentation/d/1pj2vJGOebXS8Ntlygei_K-1AHbAf2jtOnKFuHyPuPRA/edit?slide=id.g3d95bc28e3b_0_442#slide=id.g3d95bc28e3b_0_442" target="_blank" rel="noopener">broader department priorities</a>. Created a team-level strategy document that translated department objectives into actionable team direction, ensuring individual and team goals laddered up to organizational priorities while strengthening focus, accountability, and alignment across the team.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">10</span>
+      <span class="acc-card-tag">Governance</span>
+      <h3 class="acc-card-title">Goals &amp; Metrics Framework</h3>
+      <p class="acc-card-body">Drafted the first <a href="https://docs.google.com/document/d/1fRac18dm4i1Mfxiv74IAwsSURc_tz3x_grc13_CImU4/edit?usp=sharing" target="_blank" rel="noopener">formal goals and metrics framework</a> for the Digital Communications team. Socialized goals across team members and aligned individual objectives with broader organizational priorities, introducing a structured performance alignment model that improved accountability, clarified expectations, and strengthened strategic focus across the team.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">11</span>
+      <span class="acc-card-tag">Organizational Change</span>
+      <h3 class="acc-card-title">OIT Transition Framework</h3>
+      <p class="acc-card-body">Played a major role developing the transition model for team members moving into OIT — clarifying roles, responsibilities, and expectations during organizational change. Also organized and <a href="https://docs.google.com/document/d/1yF3bqFU3i9EZmTpcUHtXdm7S5WUa8ALySFDOo56PqE4/edit?usp=sharing" target="_blank" rel="noopener">structured a project list</a> specific to OIT for impacted team members, ensuring clear alignment of work, priorities, and responsibilities throughout the shift.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">12</span>
+      <span class="acc-card-tag">Culture Transformation</span>
+      <h3 class="acc-card-title">Technical Meeting Cadence Redesign</h3>
+      <p class="acc-card-body">Transformed team meeting cadence from status-report-driven sessions into a technical and interactive forum focused on demos, architecture discussions, and knowledge sharing. This shift increased engagement, improved technical visibility across teams, and fostered a stronger culture of collaboration and continuous learning.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">13</span>
+      <span class="acc-card-tag">Academic Achievement</span>
+      <h3 class="acc-card-title">Master's Degree Completed</h3>
+      <p class="acc-card-body">Successfully completed a master's program, strengthening the ability to lead in the digital space with advanced skills in enterprise technology, strategic leadership, data-informed decision-making, and modern technology practices. This enhances the application of current industry knowledge and emerging technologies to improve marketing technology strategy, technical architecture, and organizational effectiveness across Digital Communications.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">14</span>
+      <span class="acc-card-tag">Community of Practice</span>
+      <h3 class="acc-card-title">Open Source Thursday</h3>
+      <p class="acc-card-body">Established a Community of Practice for open source technology, branded as Open Source Thursday. Created a recurring space for developers and technical staff to explore AI and open source tools, share knowledge, and discuss emerging technologies. This initiative strengthened cross-team collaboration, fostered innovation, and elevated technical culture across the organization.</p>
+    </div>
+
+    <div class="acc-card">
+      <span class="acc-card-num">15</span>
+      <span class="acc-card-tag">Enterprise Portfolio</span>
+      <h3 class="acc-card-title">12+ Platform Technical Leadership</h3>
+      <p class="acc-card-body">Provided strong technical leadership across Folwell, Rochester Campus, Board of Regents, President, System, Government Relations, College of Pharmacy, Safe Campus, and additional Drupal-based environments, ensuring creativity, accessibility, operational stability, and alignment with institutional standards while supporting both day-to-day execution and long-term strategic direction.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- IMPACT STATS -->
+<div class="stats-strip" id="impact">
+  <div class="stat-cell">
+    <span class="stat-num"><span class="counter" data-target="12">0</span><span class="stat-unit">+</span></span>
+    <p class="stat-label">Enterprise Platforms Managed</p>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num"><span class="counter" data-target="15">0</span></span>
+    <p class="stat-label">Major Initiatives Delivered</p>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num"><span class="counter" data-target="20">0</span><span class="stat-unit">+</span></span>
+    <p class="stat-label">Folwell Components, Features, and Bug Fixes</p>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num" style="font-size:32px;padding-top:6px;display:block;line-height:1.1;color:var(--ink);">Major Progress</span>
+    <p class="stat-label">EMS Transformation Unlocked in 7 Months</p>
+  </div>
+  <div class="stat-cell">
+    <span class="stat-num"><span class="counter" data-target="100">0</span><span class="stat-unit">%</span></span>
+    <p class="stat-label">Commitment to Innovation and Creativity</p>
+  </div>
+</div>
+
+<!-- BAND QUOTE -->
+<!--<div class="band">
+  <p class="band-quote">"When <em>architecture meets ambition,</em> and leadership meets <em>genuine care</em> for people and mission — organizations don't just improve. They <em>transform.</em>"</p>
+  <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:36px;position:relative;z-index:1;">2024–25 · Digital Communications · University of Minnesota</p>
+</div>-->
+
+<!-- SKILLS -->
+<section class="section" id="skills">
+  <div class="section-label reveal">Part Two</div>
+  <h2 class="section-title reveal">How Results<br>Were Achieved</h2>
+  <p class="section-intro reveal">A combination of deep technical expertise, enterprise systems thinking, academic achievement, and a consistent focus on collaboration, equity, and organizational alignment drove this year's outcomes.</p>
+
+  <div class="skills-layout">
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:25px;font-weight:700;color:var(--ink);margin-bottom:30px;line-height:1.2;">Core Competencies &amp;<br>Technical Mastery</h3>
+		
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Strategic Planning &amp; Org Alignment</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+		      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">AI &amp; Emerging Technology</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Enterprise Web Architecture</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+	 <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Organizational Change Leadership</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Drupal Ecosystem &amp; API Design</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Cross-Functional Collaboration</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Innovation-Driven Engineering Practice</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Stakeholder Communication</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Mentorship &amp; Team Development</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Data-Informed Decision Making</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">CI/CD &amp; GitHub Engineering</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Executive Reporting &amp; Framing</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Budget &amp; Resource Prioritization</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+		      <div class="skill-row">
+        <div class="skill-header"><span class="skill-name">Accessibility &amp; Governance</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="100"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:25px;font-weight:700;color:var(--ink);margin-bottom:30px;line-height:1.2;">Key Initiatives<br>Timeline</h3>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Platform Architecture</div>
+          <div class="tl-title">EMS — 8 Years of Progress in 7 Months</div>
+          <p class="tl-body">Removed roadblocks, streamlined processes, and delivered more EMS progress in seven months than the previous eight years combined.</p>
+        </div>
+		  <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">AI Innovation and Automation</div>
+          <div class="tl-title">Explored AI Technologies to Modernize Workflows and Improve Efficiency</div>
+          <p class="tl-body">Evaluated AI-assisted development, automation opportunities, and process optimization strategies to reduce repetitive work, streamline team processes, and support future digital transformation initiatives across the organization.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Design System</div>
+          <div class="tl-title">20+ Folwell Components and Features Shipped</div>
+          <p class="tl-body">Video Carousel, Testimonial, Emergency Banners, Equal-Height Callouts, Layout Builder Styles, and Directional Link — all live and linked.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Academic Milestone</div>
+          <div class="tl-title">Master's Degree Successfully Completed</div>
+          <p class="tl-body">Advanced knowledge in enterprise technology, strategic leadership, and data-informed decision-making now directly applied to organizational priorities.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Engineering Culture</div>
+          <div class="tl-title">Open Source Thursday Launched</div>
+          <p class="tl-body">Community of Practice established — a recurring forum for AI, open source exploration, and knowledge sharing across teams.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Organizational Leadership</div>
+          <div class="tl-title">First Goals &amp; Metrics Framework Created</div>
+          <p class="tl-body">Digital Communications' inaugural formal goals framework drafted, introducing structured performance alignment across the entire team.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Transition Leadership</div>
+          <div class="tl-title">OIT Transition Model Developed</div>
+          <p class="tl-body">Framework built to clarify roles, responsibilities, and project alignment during organizational change — reducing ambiguity and ensuring continuity.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-tag">Future Vision</div>
+          <div class="tl-title">Folwell 2.0 Roadmap Taking Shape</div>
+          <p class="tl-body">AI-powered capabilities, workflow automation, and modernized development approaches planned for the next generation enterprise design system.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUALITIES -->
+<section class="section" id="qualities" style="background: var(--paper-warm); max-width: 100%; padding-left: 0; padding-right: 0;">
+  <div style="max-width: 1100px; margin: 0 auto; padding: 100px 40px;">
+    <div class="section-label reveal">Leadership Qualities</div>
+    <h2 class="section-title reveal">The Strengths Behind<br>Every Achievement</h2>
+    <p class="section-intro reveal">Eight defining qualities that powered this year's results, from technical mastery and academic growth to cultural transformation and innovative leadership.</p>
+
+    <div class="qualities-grid reveal">
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Enterprise Systems Thinking</h3>
+        <p class="quality-body">Consistently evaluated how platforms, processes, and teams interact across the broader ecosystem, anticipating downstream impacts and designing for long-term organizational scalability rather than optimizing isolated components.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Strategic Alignment</h3>
+        <p class="quality-body">Translated high-level department priorities into actionable team-level strategies. Created structured frameworks aligning individual contributions with organizational objectives, improving clarity, accountability, and focus at every level.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Change Leadership</h3>
+        <p class="quality-body">Guided teams through technical and organizational change by removing roadblocks, simplifying processes, and aligning stakeholders. Strengthened collaboration, improved execution clarity, and helped position the organization for sustained digital growth and modernization.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">AI &amp; Innovation Leadership</h3>
+        <p class="quality-body">Exploration and experimentation with emerging AI technologies and automation tools, identifying practical opportunities to improve efficiency, modernize workflows, and position the organization at the forefront of digital innovation.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Mentorship &amp; Culture Building</h3>
+        <p class="quality-body">Actively supported team members through architectural guidance and technical coaching. Transformed the meeting cadence from status reports into interactive technical forums, fostering continuous learning and a stronger engineering culture.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Execution &amp; Ownership</h3>
+        <p class="quality-body">Consistently applied strong prioritization and execution discipline across a broad enterprise portfolio. Balanced operational support with strategic initiatives while ensuring stability, accessibility, and governance compliance at every turn.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Continuous Learning</h3>
+        <p class="quality-body">Completed a full master's degree while simultaneously delivering enterprise-scale leadership. Applied advanced academic knowledge in strategic leadership, data-informed decision-making, and enterprise technology directly to organizational priorities.</p>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon"></span>
+        <h3 class="quality-title">Visionary Roadmapping</h3>
+        <p class="quality-body">Shaped Folwell 2.0 and the EMS long-term architecture, balancing current delivery with future-state planning. Demonstrated the ability to execute at scale today while designing the platform capabilities of tomorrow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL BAND -->
+<!--<div class="band" style="padding: 88px 40px;">
+  <p class="band-quote">"When <em>architecture meets ambition,</em> and leadership meets <em>genuine care</em> for people and mission — organizations don't just improve. They <em>transform.</em>"</p>
+  <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.22);margin-top:44px;position:relative;z-index:1;">Annual Performance Review · Digital Communications · University of Minnesota · 2024–25</p>
+</div>-->
+
+<!-- FOOTER -->
+<!--<footer class="footer">
+  <div class="footer-line"></div>
+  <div class="footer-name">Enterprise Architecture<br>&amp; Digital Leadership</div>
+  <p class="footer-role">Digital Communications · University of Minnesota</p>
+  <div class="footer-line"></div>
+  <p class="footer-year">Evaluation Period 2024–2025 · 15 initiatives delivered · 12+ platforms led · Master's degree completed · 100% of Interim Director goals accomplished.</p>
+</footer>-->
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+function animateRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animateRing); }
+animateRing();
+document.querySelectorAll('a, .acc-card, .quality-card, .chip, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='60px'; ring.style.height='60px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='40px'; ring.style.height='40px'; });
+});
+
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll('.skill-bar-fill').forEach(bar => { bar.style.width = bar.dataset.width+'%'; });
+      if (entry.target.classList.contains('stat-cell')) entry.target.classList.add('in-view');
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal, .tl-item, .skill-row, .stat-cell').forEach(el => observer.observe(el));
+
+function animateCounter(el, target, duration=1800) {
+  const startTime = performance.now();
+  function update(now) {
+    const progress = Math.min((now-startTime)/duration, 1);
+    const eased = 1 - Math.pow(1-progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+setTimeout(() => { document.querySelectorAll('[data-count]').forEach(el => animateCounter(el, parseInt(el.dataset.count))); }, 1200);
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.counter').forEach(el => animateCounter(el, parseInt(el.dataset.target)));
+      statsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+const strip = document.querySelector('.stats-strip');
+if (strip) statsObserver.observe(strip);
 </script>
 </body>
 </html>
